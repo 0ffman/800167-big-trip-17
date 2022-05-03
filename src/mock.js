@@ -1,5 +1,5 @@
-import { getInteger, getRandomArrayElement, generateDate } from './utils.js';
-import { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from './data.js';
+import {getInteger, getRandomArrayElement, generateDate} from './utils.js';
+import {TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES} from './data.js';
 
 
 const generateDestination = () => ({

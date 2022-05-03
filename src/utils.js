@@ -25,6 +25,6 @@ const fullDate = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
 const yearMonthDate = (date) => dayjs(date).format('YYYY-MM-DD');
 const humanizeDate = (date) => dayjs(date).format('MMM D');
 const hoursMinutesDate = (date) => dayjs(date).format('hh:mm');
+const slashFullDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
-
-export { getInteger, getRandomArrayElement, generateDate, humanizeDate, hoursMinutesDate, yearMonthDate, fullDate };
+export { getInteger, getRandomArrayElement, generateDate, humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, slashFullDate };

@@ -15,6 +15,7 @@ export default class TripPresenter {
     this.eventContainer = eventContainer;
     this.pointsModel = pointsModel;
     this.eventPoints = [...this.pointsModel.getPoints()];
+    const editPoint = this.eventPoints[0];
 
     render(new SortView(), this.eventContainer);
     render(this.tripListComponent, this.eventContainer);
@@ -31,6 +32,6 @@ export default class TripPresenter {
     });
 
     render(this.tripListItemComponent, this.tripListComponent.getElement(), RenderPosition.AFTERBEGIN);
-    render(this.pointEditComponent, this.tripListItemComponent.getElement());
+    render(new PointEditView(editPoint), this.tripListItemComponent.getElement());
   };
 }

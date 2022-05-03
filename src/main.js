@@ -2,7 +2,6 @@ import {render} from './render.js';
 import FilterView from './view/filter-view.js';
 import TripPresenter from './presenter/event-presenter.js';
 import PointsModel from './model/points-model.js';
-import  './mock.js';
 
 const siteMainElement = document.querySelector('.page-main');
 const siteEventContainerElement = siteMainElement.querySelector('.trip-events');
