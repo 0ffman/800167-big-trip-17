@@ -48,9 +48,9 @@ const generatePoint = () => ({
   basePrice: getInteger(100, 300),
   dateFrom: generateDate(0, 2),
   dateTo: generateDate(5, 10),
-  destination: getRandomArrayElement(Array.from({length: 10}, generateDestination)),
+  destination: generateDestination(),
   isFavorite: Boolean(getInteger(0, 1)),
-  offers: getRandomArrayElement(Array.from({length: 20}, generateOffer)).offers,
+  offers: getRandomArrayElement(Array.from({length: 3}, generateOffer)).offers,
   type: getRandomArrayElement(TYPE_VALUES)
 });
 
