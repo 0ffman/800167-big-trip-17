@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
 
-const getInteger = (min = 0, max = 10) => {
+const MAX_VALUE = 10;
+const HOURS_IN_DAY = 24;
+const MINUTES_IN_HOUR = 60;
+
+const getInteger = (min = 0, max = MAX_VALUE) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   if ( min < 0 || min >= max ) {
@@ -14,9 +18,9 @@ const getRandomArrayElement = (elements) => elements[getInteger(0, elements.leng
 
 const generateDate = (dayStart, dayEnd) => {
   const daysGap = getInteger(dayStart, dayEnd);
-  const hoursPerDay = getInteger(0, 24);
-  const minutesPerHour = getInteger(0, 60);
-  const secondsPerMinute = getInteger(0, 60);
+  const hoursPerDay = getInteger(0, HOURS_IN_DAY);
+  const minutesPerHour = getInteger(0, MINUTES_IN_HOUR);
+  const secondsPerMinute = getInteger(0, MINUTES_IN_HOUR);
 
   return dayjs().add(daysGap, 'day').add(hoursPerDay, 'hour').add(minutesPerHour, 'minute').add(secondsPerMinute, 'second').toDate();
 };

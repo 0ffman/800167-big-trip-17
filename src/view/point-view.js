@@ -29,13 +29,15 @@ const createPointTemplate = (point) =>
 
   const dateToFull = dateTo ? fullDate(dateTo) : '';
 
+  const HOURS_IN_DAY = 24;
+
 
   const calculateEventDuration = (from = null, to = null) => {
     const dateIn = dayjs(from);
     const dateOut = dayjs(to);
     let hours = dateOut.diff(dateIn, 'hours');
-    const days = Math.floor(hours / 24);
-    hours = hours - (days * 24);
+    const days = Math.floor(hours / HOURS_IN_DAY);
+    hours = hours - (days * HOURS_IN_DAY);
 
     return `${days}D ${hours}M`;
   };
