@@ -1,5 +1,5 @@
 import {createElement} from '../render.js';
-import {slashFullDate} from '../utils.js';
+import {getSlashFullDate} from '../utils.js';
 import {TYPE_VALUES, NAME_VALUES} from '../data.js';
 
 const createOfferTemplate = ({id, title, price}) => (
@@ -60,9 +60,9 @@ const createPointEditTemplate = (point) => {
     type = ''
   } = point;
 
-  const dateFromSlashes = dateFrom  ? slashFullDate(dateFrom) : '';
+  const dateFromSlashes = dateFrom  ? getSlashFullDate(dateFrom) : '';
 
-  const dateToSlashes = dateTo ? slashFullDate(dateTo) : '';
+  const dateToSlashes = dateTo ? getSlashFullDate(dateTo) : '';
 
   const offersTemplate = createOffersTemplate(offers);
   const eventTypesTemplate = createEventTypesTemplate(TYPE_VALUES, type);

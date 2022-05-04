@@ -1,5 +1,5 @@
 import {createElement} from '../render.js';
-import {humanizeDate, hoursMinutesDate, yearMonthDate, fullDate} from '../utils.js';
+import {humanizeDate, getHoursMinutesDate, getYearMonthDate, getFullDate} from '../utils.js';
 import dayjs from 'dayjs';
 
 
@@ -19,15 +19,15 @@ const createPointTemplate = (point) =>
 
   const dateFromHumanize = dateFrom ? humanizeDate(dateFrom) : '';
 
-  const dateFromHoursMinutes = dateFrom ? hoursMinutesDate(dateFrom) : '';
+  const dateFromHoursMinutes = dateFrom ? getHoursMinutesDate(dateFrom) : '';
 
-  const dateFromYearMonth = dateFrom ? yearMonthDate(dateFrom) : '';
+  const dateFromYearMonth = dateFrom ? getYearMonthDate(dateFrom) : '';
 
-  const dateFromFull = dateFrom ? fullDate(dateFrom) : '';
+  const dateFromFull = dateFrom ? getFullDate(dateFrom) : '';
 
-  const dateToHoursMinutes = dateTo ? hoursMinutesDate(dateTo) : '';
+  const dateToHoursMinutes = dateTo ? getHoursMinutesDate(dateTo) : '';
 
-  const dateToFull = dateTo ? fullDate(dateTo) : '';
+  const dateToFull = dateTo ? getFullDate(dateTo) : '';
 
   const HOURS_IN_DAY = 24;
 

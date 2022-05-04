@@ -25,10 +25,10 @@ const generateDate = (dayStart, dayEnd) => {
   return dayjs().add(daysGap, 'day').add(hoursPerDay, 'hour').add(minutesPerHour, 'minute').add(secondsPerMinute, 'second').toDate();
 };
 
-const fullDate = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
-const yearMonthDate = (date) => dayjs(date).format('YYYY-MM-DD');
+const getFullDate = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
+const getYearMonthDate = (date) => dayjs(date).format('YYYY-MM-DD');
 const humanizeDate = (date) => dayjs(date).format('MMM D');
-const hoursMinutesDate = (date) => dayjs(date).format('hh:mm');
-const slashFullDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+const getHoursMinutesDate = (date) => dayjs(date).format('hh:mm');
+const getSlashFullDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
-export { getInteger, getRandomArrayElement, generateDate, humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, slashFullDate };
+export { getInteger, getRandomArrayElement, generateDate, humanizeDate, getHoursMinutesDate, getYearMonthDate, getFullDate, getSlashFullDate };
