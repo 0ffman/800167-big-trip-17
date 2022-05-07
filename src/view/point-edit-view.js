@@ -136,23 +136,26 @@ const createPointEditTemplate = (point) => {
 
 
 export default class PointEditView {
+  #element = null;
+  #point = null;
+
   constructor(point) {
-    this.point = point;
+    this.#point = point;
   }
 
-  getTemplate() {
-    return createPointEditTemplate(this.point);
+  get template() {
+    return createPointEditTemplate(this.#point);
   }
 
-  getElement() {
+  get element() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate());
+      this.element = createElement(this.template);
     }
 
     return this.element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

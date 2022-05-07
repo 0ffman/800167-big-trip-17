@@ -5,22 +5,25 @@ import PointEditView from '../view/point-edit-view.js';
 import { render } from '../render.js';
 
 export default class TripPresenter {
+  #eventContainer = null;
+  #pointsModel = null;
 
-  tripListComponent = new TripListView();
-  pointEditComponent = new PointEditView();
+  #tripListComponent = new TripListView();
+  #pointEditComponent = new PointEditView();
 
   init = (eventContainer, pointsModel) => {
-    this.eventContainer = eventContainer;
-    this.pointsModel = pointsModel;
-    this.eventPoints = [...this.pointsModel.getPoints()];
-    const editPoint = this.eventPoints[0];
+    this.#eventContainer = eventContainer;
+    this.#pointsModel = pointsModel;
+    this.#eventPoints = [...this.#pointsModel.points];
 
     render(new SortView(), this.eventContainer);
     render(this.tripListComponent, this.eventContainer);
 
-    render(new PointEditView(editPoint), this.tripListComponent.getElement());
-    for (let i = 0; i < this.eventPoints.length; i++) {
-      render(new PointView(this.eventPoints[i]), this.tripListComponent.getElement());
+
+    //render(new PointEditView(editPoint), this.tripListComponent.getElement());
+
+    for (let i = 0; i < this.#eventPoints.length; i++) {
+      render(new PointView(this.#eventPoints[i]), this.tripListComponent.getElement());
     }
   };
 }
