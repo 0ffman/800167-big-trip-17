@@ -30,35 +30,35 @@ export default class TripPresenter {
     const pointComponent = new PointView(point);
     const pointEditComponent = new PointEditView(point);
 
-    const replaceCardToForm = () => {
+    const replaceCardToPoint = () => {
       this.#tripListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
     };
 
-    const replaceFormToCard = () => {
+    const replacePointToCard = () => {
       this.#tripListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        replaceFormToCard();
+        replacePointToCard();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replaceCardToForm();
+      replaceCardToPoint();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
     pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
       evt.preventDefault();
-      replaceFormToCard();
+      replacePointToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
     pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replaceFormToCard();
+      replacePointToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
