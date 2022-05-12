@@ -1,8 +1,9 @@
+import { render } from '../render.js';
 import SortView from '../view/sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
-import { render } from '../render.js';
+import NoPointView from '../view/no-point-view.js';
 
 export default class TripPresenter {
   #eventContainer = null;
@@ -16,13 +17,18 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
     this.#eventPoints = [...this.#pointsModel.points];
 
-    render(new SortView(), this.#eventContainer);
-    render(this.#tripListComponent, this.#eventContainer);
 
+    if (this.#eventPoints.length) {
+      render(new SortView(), this.#eventContainer);
+      render(this.#tripListComponent, this.#eventContainer);
 
-    for (let i = 0; i < this.#eventPoints.length; i++) {
-      this.#renderPoint(this.#eventPoints[i]);
+      for (let i = 0; i < this.#eventPoints.length; i++) {
+        this.#renderPoint(this.#eventPoints[i]);
+      }
+    } else {
+      render(new NoPointView(), this.#eventContainer);
     }
+
 
   };
 
