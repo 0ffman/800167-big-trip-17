@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 import SortView from '../view/sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import PointView from '../view/point-view.js';
@@ -22,8 +22,8 @@ export default class TripPresenter {
       render(new SortView(), this.#eventContainer);
       render(this.#tripListComponent, this.#eventContainer);
 
-      for (let i = 0; i < this.#eventPoints.length; i++) {
-        this.#renderPoint(this.#eventPoints[i]);
+      for ( const point of this.#eventPoints) {
+        this.#renderPoint(point);
       }
     } else {
       render(new NoPointView(), this.#eventContainer);
@@ -37,11 +37,11 @@ export default class TripPresenter {
     const pointEditComponent = new PointEditView(point);
 
     const replaceCardToPoint = () => {
-      this.#tripListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const replacePointToCard = () => {
-      this.#tripListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -52,18 +52,17 @@ export default class TripPresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditClickHandler(() => {
       replaceCardToPoint();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditComponent.setFormSubmitHandler(() => {
       replacePointToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointEditComponent.setEditClickHandler(() => {
       replacePointToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
