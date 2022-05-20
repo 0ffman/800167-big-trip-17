@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { filterType } from './data';
 
 const MAX_VALUE = 10;
 const HOURS_IN_DAY = 24;
@@ -31,4 +32,31 @@ const humanizeDate = (date) => dayjs(date).format('MMM D');
 const getHoursMinutesDate = (date) => dayjs(date).format('hh:mm');
 const getSlashFullDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
-export { getInteger, getRandomArrayElement, generateDate, humanizeDate, getHoursMinutesDate, getYearMonthDate, getFullDate, getSlashFullDate };
+const isDateFuture = (dateFrom) => dateFrom && dayjs().isBefore(dateFrom, 'D');
+const isDatePast = (dateTo) => dateTo && dayjs().isAfter(dateTo, 'D');
+
+const filter = {
+  [filterType.EVERYTHING]: (points) => points,
+  [filterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
+  [filterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
+};
+
+
+const generateFilter = (points) => Object.entries(filter).map(
+  ([filterName, filterPoints]) => ({
+    name: filterName,
+    count: filterPoints(points).length,
+  }),
+);
+
+export {
+  getInteger,
+  getRandomArrayElement,
+  generateDate,
+  humanizeDate,
+  getHoursMinutesDate,
+  getYearMonthDate,
+  getFullDate,
+  getSlashFullDate,
+  generateFilter
+};

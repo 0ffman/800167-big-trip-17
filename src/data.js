@@ -33,4 +33,10 @@ const DESCRIPTION_VALUES = [
   'Pellentesque vestibulum mi interdum mauris rutrum tempus.'
 ];
 
-export { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES };
+const filterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
+
+export { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES, filterType };

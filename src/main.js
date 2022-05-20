@@ -2,6 +2,7 @@ import {render} from './framework/render.js';
 import FilterView from './view/filter-view.js';
 import TripPresenter from './presenter/event-presenter.js';
 import PointsModel from './model/points-model.js';
+import { generateFilter } from './utils.js';
 
 const siteMainElement = document.querySelector('.page-main');
 const siteEventContainerElement = siteMainElement.querySelector('.trip-events');
@@ -10,7 +11,8 @@ const filterContainerElement = siteHeaderElement.querySelector('.trip-controls__
 
 const pointsModel = new PointsModel();
 const tripPresenter = new TripPresenter();
+const filters = generateFilter(pointsModel.points);
 
-render(new FilterView(), filterContainerElement);
+render(new FilterView(filters), filterContainerElement);
 
 tripPresenter.init(siteEventContainerElement, pointsModel);
