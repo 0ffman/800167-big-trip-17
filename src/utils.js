@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { filterType } from './data';
+import { FilterType } from './data';
 
 const MAX_VALUE = 10;
 const HOURS_IN_DAY = 24;
@@ -36,9 +36,9 @@ const isDateFuture = (dateFrom) => dateFrom && dayjs().isBefore(dateFrom, 'D');
 const isDatePast = (dateTo) => dateTo && dayjs().isAfter(dateTo, 'D');
 
 const filter = {
-  [filterType.EVERYTHING]: (points) => points,
-  [filterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
-  [filterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
+  [FilterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
 };
 
 
