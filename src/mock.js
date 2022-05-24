@@ -1,5 +1,6 @@
-import {getInteger, getRandomArrayElement, generateDate} from './utils.js';
-import {TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES} from './data.js';
+import { getInteger, getRandomArrayElement, generateDate } from './utils.js';
+import { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from './data.js';
+import { nanoid } from 'nanoid';
 
 const RANDOM_PHOTO_COUNT = 50;
 const MAX_ID = 20;
@@ -54,7 +55,7 @@ const generateOffer = () => ({
 });
 
 const generatePoint = () => ({
-  id: getInteger(1, MAX_ID),
+  id: nanoid(),
   basePrice: getInteger(MIN_BASE_PRICE, MAX_BASE_PRICE),
   dateFrom: generateDate(0, MAX_DATE_FROM),
   dateTo: generateDate(MIN_DATE_TO, MAX_DATE_TO),

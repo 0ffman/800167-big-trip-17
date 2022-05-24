@@ -3,11 +3,13 @@ import SortView from '../view/sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import EventItemPresenter from './event-item-presenter';
+import { updateItem } from '../utils.js';
 
 export default class TripPresenter {
   #eventContainer = null;
   #pointsModel = null;
   #eventPoints = [];
+  #eventItemPresenter = new Map();
 
   #tripListComponent = new TripListView();
 
@@ -31,9 +33,19 @@ export default class TripPresenter {
 
   };
 
+  #handleEventChange = (updatedEvent) => {
+    this.#eventPoints = updateItem(this.#eventPoints, updatedEvent);
+    this.#eventItemPresenter.get(updatedEvent.id).init(updatedEvent);
+  };
 
   #renderPoint = (point) => {
     const eventItemPresenter = new EventItemPresenter(this.#tripListComponent.element);
     eventItemPresenter.init(point);
+    this.#eventItemPresenter.set(point.id, eventItemPresenter);
+  };
+
+  #clearEventList = () => {
+    this.#eventItemPresenter.forEach((presenter) => presenter.destroy());
+    this.#eventItemPresenter.clear();
   };
 }
