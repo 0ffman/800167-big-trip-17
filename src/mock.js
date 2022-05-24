@@ -3,7 +3,6 @@ import { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from './da
 import { nanoid } from 'nanoid';
 
 const RANDOM_PHOTO_COUNT = 50;
-const MAX_ID = 20;
 const MIN_BASE_PRICE = 100;
 const MAX_BASE_PRICE = 300;
 const MAX_PRICE = 500;
