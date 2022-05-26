@@ -46,7 +46,6 @@ export default class TripPresenter {
   };
 
   #renderPoints = (from, to) => {
-    console.log(this.#eventPoints);
     this.#eventPoints
       .slice(from, to)
       .forEach((point) => this.#renderPoint(point));
@@ -57,7 +56,6 @@ export default class TripPresenter {
   };
 
   #renderEventList = () => {
-    console.log(this.#eventPoints.length);
     render(this.#tripListComponent, this.#eventContainer);
     this.#renderPoints(0, this.#eventPoints.length);
   };
@@ -68,7 +66,6 @@ export default class TripPresenter {
   };
 
   #renderEventSection = () => {
-    //render(this.#tripListComponent, this.#eventContainer);
     if (this.#eventPoints.length) {
       this.#renderSort();
       this.#renderEventList();

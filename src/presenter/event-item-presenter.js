@@ -27,11 +27,11 @@ export default class EventItemPresenter {
   init = (point) => {
     this.#point = point;
 
-    this.#pointComponent = new PointView(point);
-    this.#pointEditComponent = new PointEditView(point);
-
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
+
+    this.#pointComponent = new PointView(point);
+    this.#pointEditComponent = new PointEditView(point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
