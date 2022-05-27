@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { filterType } from './data';
+import { FilterType } from './data';
 
 const MAX_VALUE = 10;
 const HOURS_IN_DAY = 24;
@@ -36,9 +36,9 @@ const isDateFuture = (dateFrom) => dateFrom && dayjs().isBefore(dateFrom, 'D');
 const isDatePast = (dateTo) => dateTo && dayjs().isAfter(dateTo, 'D');
 
 const filter = {
-  [filterType.EVERYTHING]: (points) => points,
-  [filterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
-  [filterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
+  [FilterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
 };
 
 
@@ -49,6 +49,20 @@ const generateFilter = (points) => Object.entries(filter).map(
   }),
 );
 
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
 export {
   getInteger,
   getRandomArrayElement,
@@ -58,5 +72,6 @@ export {
   getYearMonthDate,
   getFullDate,
   getSlashFullDate,
-  generateFilter
+  generateFilter,
+  updateItem
 };
