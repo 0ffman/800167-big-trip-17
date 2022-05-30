@@ -63,6 +63,20 @@ const updateItem = (items, update) => {
   ];
 };
 
+const sortEventTime = (eventA, eventB) => {
+  const dateFromOne = dayjs(eventA.dateFrom);
+  const dateToOne = dayjs(eventA.dateTo);
+  const durationEventOne = dateToOne.diff(dateFromOne);
+
+  const dateFromTwo = dayjs(eventB.dateFrom);
+  const dateToTwo = dayjs(eventB.dateTo);
+  const durationEventTwo = dateToTwo.diff(dateFromTwo);
+
+  return durationEventTwo - durationEventOne;
+};
+
+const sortEventPrice = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
+
 export {
   getInteger,
   getRandomArrayElement,
@@ -73,5 +87,7 @@ export {
   getFullDate,
   getSlashFullDate,
   generateFilter,
-  updateItem
+  updateItem,
+  sortEventTime,
+  sortEventPrice
 };

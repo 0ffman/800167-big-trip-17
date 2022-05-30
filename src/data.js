@@ -39,4 +39,10 @@ const FilterType = {
   PAST: 'past'
 };
 
-export { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES, FilterType };
+const SortType = {
+  DEFAULT: 'default',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
+export { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES, FilterType, SortType };
