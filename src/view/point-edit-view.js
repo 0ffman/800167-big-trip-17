@@ -1,6 +1,8 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {getSlashFullDate} from '../utils.js';
-import {TYPE_VALUES, NAME_VALUES} from '../data.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { getSlashFullDate, getRandomArrayElement, getInteger } from '../utils.js';
+import { TYPE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from '../data.js';
+
+const RANDOM_PHOTO_COUNT = 50;
 
 const createOfferTemplate = ({id, title, price}) => (
   `<div class="event__offer-selector">
@@ -8,6 +10,7 @@ const createOfferTemplate = ({id, title, price}) => (
           id="event-offer-${title.toLowerCase().replace(' ', '-')}-${id}"
           type="checkbox"
           name="event-offer-${title.toLowerCase().replace(' ', '-')}"
+          value="${id}"
       >
       <label class="event__offer-label" for="event-offer-${title.toLowerCase().replace(' ', '-')}-${id}">
         <span class="event__offer-title">${title}</span>
@@ -33,9 +36,9 @@ const createEventTypesTemplate = (types, eventType) => (
   `
 );
 
-const createDestinationsTemplate = (destinations) => (
+const createDestinationsTemplate = (destinations, destinationName) => (
   `
-    ${destinations.map((destination) => `<option value="${destination}"></option>`).join('')}
+    ${destinations.map((destination) => `<option value="${destination}" ${destination === destinationName ? 'selected="selected"' : ''}></option>`).join('')}
   `
 );
 
@@ -48,26 +51,28 @@ const createDestinationPhotosTemplate = (destinationPhotos) => (
 
 const createPointEditTemplate = (point) => {
   const {
-    basePrice = '',
-    dateFrom = null,
-    dateTo = null,
-    destination = {
-      description: '',
-      name: '',
-      pictures: []
-    },
-    offers = [],
-    type = ''
+    basePrice,
+    dateFrom ,
+    dateTo,
+    destination,
+    offers,
+    type,
+    isEdit
   } = point;
 
   const dateFromSlashes = dateFrom  ? getSlashFullDate(dateFrom) : '';
-
   const dateToSlashes = dateTo ? getSlashFullDate(dateTo) : '';
 
   const offersTemplate = createOffersTemplate(offers);
   const eventTypesTemplate = createEventTypesTemplate(TYPE_VALUES, type);
-  const destinationsTemplate = createDestinationsTemplate(NAME_VALUES);
+  const destinationsTemplate = createDestinationsTemplate(NAME_VALUES, destination.name);
   const destinationPhotosTemplate = createDestinationPhotosTemplate(destination.pictures);
+
+  const buttonEditTemplate = isEdit
+    ? `<button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>`
+    : '';
 
   return (
     `<li class="trip-events__item">
@@ -107,10 +112,8 @@ const createPointEditTemplate = (point) => {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+          ${isEdit ? '<button class="event__reset-btn" type="reset">Delete</button>' : '<button class="event__reset-btn" type="reset">Cancel</button>'}
+          ${buttonEditTemplate}
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
@@ -135,21 +138,32 @@ const createPointEditTemplate = (point) => {
 };
 
 
-export default class PointEditView extends AbstractView {
+export default class PointEditView extends AbstractStatefulView {
   #point = null;
 
   constructor(point) {
     super();
-    this.#point = point;
+    this._state = PointEditView.parsePointToState(point);
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createPointEditTemplate(this.#point);
+    return createPointEditTemplate(this._state);
   }
 
   setEditClickHandler = (callback) => {
-    this._callback.editClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    if ( this.element.querySelector('.event__rollup-btn') ) {
+      this._callback.editClick = callback;
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    }
+  };
+
+  setCancelClickHandler = (callback) => {
+    if ( this.element.querySelector('.event__reset-btn.cancel') ) {
+      this._callback.editClick = callback;
+      this.element.querySelector('.event__reset-btn.cancel').addEventListener('click', this.#editClickHandler);
+    }
   };
 
   #editClickHandler = (evt) => {
@@ -162,9 +176,112 @@ export default class PointEditView extends AbstractView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(PointEditView.parseStateToPoint(this._state));
+  };
+
+  reset = (point) => {
+    this.updateElement(
+      PointEditView.parsePointToState(point),
+    );
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
+    this.setCancelClickHandler(this._callback.editClick);
+  };
+
+  #pointTypeToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+    });
+  };
+
+  #pointDestinationToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destination: {
+        description: getRandomArrayElement(DESCRIPTION_VALUES),
+        name: evt.target.value,
+        pictures: [
+          {
+            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
+            description: getRandomArrayElement(DESCRIPTION_VALUES)
+          },
+          {
+            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
+            description: getRandomArrayElement(DESCRIPTION_VALUES)
+          },
+          {
+            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
+            description: getRandomArrayElement(DESCRIPTION_VALUES)
+          },
+          {
+            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
+            description: getRandomArrayElement(DESCRIPTION_VALUES)
+          },
+          {
+            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
+            description: getRandomArrayElement(DESCRIPTION_VALUES)
+          }
+        ]
+      }
+    });
+  };
+
+  #pointOffersToggleHandler = (evt) => {
+    evt.preventDefault();
+    const selectedOffers = this._state.offers;
+    const targetValue = parseInt(evt.target.value, 10);
+    if ( evt.target.checked ) {
+      selectedOffers.push(targetValue);
+    } else {
+      const myIndex = selectedOffers.indexOf(targetValue);
+      if ( myIndex !== -1 ) {
+        selectedOffers.splice(myIndex, 1);
+      }
+    }
+    this._setState({
+      offers: selectedOffers,
+    });
+  };
+
+  #pointPriceToggleHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list')
+      .addEventListener('change', this.#pointTypeToggleHandler);
+
+    this.element.querySelector('.event__field-group.event__field-group--destination')
+      .addEventListener('change', this.#pointDestinationToggleHandler);
+
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#pointOffersToggleHandler);
+
+    this.element.querySelector('.event__field-group.event__field-group--price')
+      .addEventListener('change', this.#pointPriceToggleHandler);
+  };
+
+  static parsePointToState = (point) => ({...point,
+    isEdit: Object.keys(point).length !== 0
+  });
+
+  static parseStateToPoint = (state) => {
+    const point = {...state};
+
+    delete point.isEdit;
+
+    return point;
   };
 
 }

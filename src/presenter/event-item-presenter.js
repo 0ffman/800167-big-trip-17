@@ -37,6 +37,7 @@ export default class EventItemPresenter {
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setEditClickHandler(this.#handleCloseClick);
+    this.#pointEditComponent.setCancelClickHandler(this.#handleCloseClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#pointListContainer);
@@ -62,6 +63,7 @@ export default class EventItemPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replacePointToCard();
     }
   };
@@ -82,6 +84,7 @@ export default class EventItemPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replacePointToCard();
     }
   };
@@ -91,6 +94,7 @@ export default class EventItemPresenter {
   };
 
   #handleCloseClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replacePointToCard();
   };
 
