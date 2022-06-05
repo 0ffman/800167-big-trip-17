@@ -61,10 +61,14 @@ export default class EventItemPresenter {
     remove(this.#pointEditComponent);
   };
 
+  resetPointAndReplaceToCard = () => {
+    this.#pointEditComponent.reset(this.#point);
+    this.#replacePointToCard();
+  };
+
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#pointEditComponent.reset(this.#point);
-      this.#replacePointToCard();
+      this.resetPointAndReplaceToCard();
     }
   };
 
@@ -84,8 +88,7 @@ export default class EventItemPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#replacePointToCard();
+      this.resetPointAndReplaceToCard();
     }
   };
 
@@ -94,8 +97,7 @@ export default class EventItemPresenter {
   };
 
   #handleCloseClick = () => {
-    this.#pointEditComponent.reset(this.#point);
-    this.#replacePointToCard();
+    this.resetPointAndReplaceToCard();
   };
 
   #handleFavoriteClick = () => {
