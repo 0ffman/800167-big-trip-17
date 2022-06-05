@@ -64,4 +64,4 @@ const generatePoint = () => ({
   type: getRandomArrayElement(TYPE_VALUES)
 });
 
-export { generatePoint, generateDestination };
+export { generatePoint };

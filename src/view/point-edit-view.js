@@ -1,14 +1,11 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getSlashFullDate, getRandomArrayElement, getInteger } from '../utils.js';
 import { TYPE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from '../data.js';
-import { generateDestination } from '../mock.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 const RANDOM_PHOTO_COUNT = 50;
-
-console.log(generateDestination());
 
 const createOfferTemplate = ({id, title, price}) => (
   `<div class="event__offer-selector">
