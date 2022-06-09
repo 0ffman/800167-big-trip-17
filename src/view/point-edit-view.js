@@ -95,27 +95,53 @@ const createPointEditTemplate = (point) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination"
+                   id="event-destination-1"
+                   type="text"
+                   name="event-destination"
+                   value="${destination.name}"
+                   list="destination-list-1"
+                   required
+                   autocomplete="off">
             <datalist id="destination-list-1">
               ${destinationsTemplate}
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time event__input--start" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromSlashes}">
+            <input class="event__input  event__input--time event__input--start"
+                   id="event-start-time-1"
+                   type="text"
+                   name="event-start-time"
+                   value="${dateFromSlashes}"
+                   required
+                   autocomplete="off">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time event__input--end" id="event-end-time-1" type="text" name="event-end-time" value="${dateToSlashes}">
+            <input class="event__input  event__input--time event__input--end"
+                   id="event-end-time-1"
+                   type="text"
+                   name="event-end-time"
+                   value="${dateToSlashes}"
+                   required
+                   autocomplete="off">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price"
+                   id="event-price-1"
+                   type="number"
+                   name="event-price"
+                   value="${basePrice}"
+                   min="1"
+                   step="1"
+                   autocomplete="off">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          ${isEdit ? '<button class="event__reset-btn" type="reset">Delete</button>' : '<button class="event__reset-btn" type="reset">Cancel</button>'}
+          ${isEdit ? '<button class="event__reset-btn event__reset-btn--delete" type="reset">Delete</button>' : '<button class="event__reset-btn event__reset-btn--cancel" type="reset">Cancel</button>'}
           ${buttonEditTemplate}
         </header>
         <section class="event__details">
@@ -165,9 +191,9 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   setCancelClickHandler = (callback) => {
-    if ( this.element.querySelector('.event__reset-btn.cancel') ) {
+    if ( this.element.querySelector('.event__reset-btn--cancel') ) {
       this._callback.editClick = callback;
-      this.element.querySelector('.event__reset-btn.cancel').addEventListener('click', this.#editClickHandler);
+      this.element.querySelector('.event__reset-btn--cancel').addEventListener('click', this.#editClickHandler);
     }
   };
 
@@ -202,6 +228,18 @@ export default class PointEditView extends AbstractStatefulView {
     );
   };
 
+  setDeleteClickHandler = (callback) => {
+    if ( this.element.querySelector('.event__reset-btn--delete') ) {
+      this._callback.deleteClick = callback;
+      this.element.querySelector('.event__reset-btn--delete').addEventListener('click', this.#formDeleteClickHandler);
+    }
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(PointEditView.parseStateToEvent(this._state));
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setDateFromDatepicker();
@@ -209,6 +247,7 @@ export default class PointEditView extends AbstractStatefulView {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
     this.setCancelClickHandler(this._callback.editClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #pointTypeToggleHandler = (evt) => {
@@ -278,40 +317,42 @@ export default class PointEditView extends AbstractStatefulView {
     this._setState({
       dateFrom: userDate,
     });
+    this.#setDateToDatepicker();
   };
 
   #dateToChangeHandler = ([userDate]) => {
     this._setState({
       dateTo: userDate,
     });
+    this.#setDateFromDatepicker();
   };
 
   #setDateFromDatepicker = () => {
-    if (this._state.dateFrom) {
-      this.#datepicker = flatpickr(
-        this.element.querySelector('.event__input--start'),
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          defaultDate: this._state.dateFrom,
-          onChange: this.#dateFromChangeHandler
-        }
-      );
-    }
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__input--start'),
+      {
+        allowInput: true,
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        maxDate: this._state.dateTo,
+        onChange: this.#dateFromChangeHandler
+      }
+    );
   };
 
   #setDateToDatepicker = () => {
-    if (this._state.dateTo) {
-      this.#datepicker = flatpickr(
-        this.element.querySelector('.event__input--end'),
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          defaultDate: this._state.dateTo,
-          onChange: this.#dateToChangeHandler
-        }
-      );
-    }
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__input--end'),
+      {
+        allowInput: true,
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler
+      }
+    );
   };
 
   #setInnerHandlers = () => {
@@ -329,7 +370,7 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   static parsePointToState = (point) => ({...point,
-    isEdit: Object.keys(point).length !== 0
+    isEdit: Object.prototype.hasOwnProperty.call(point, 'id')
   });
 
   static parseStateToPoint = (state) => {
