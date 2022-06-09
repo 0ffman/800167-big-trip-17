@@ -45,4 +45,25 @@ const SortType = {
   PRICE: 'price',
 };
 
-export { TYPE_VALUES, TITLE_VALUES, NAME_VALUES, DESCRIPTION_VALUES, FilterType, SortType };
+const UserAction = {
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export {
+  TYPE_VALUES,
+  TITLE_VALUES,
+  NAME_VALUES,
+  DESCRIPTION_VALUES,
+  FilterType,
+  SortType,
+  UserAction,
+  UpdateType
+};
