@@ -41,28 +41,6 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter((point) => isDatePast(point.dateTo)),
 };
 
-
-const generateFilter = (points) => Object.entries(filter).map(
-  ([filterName, filterPoints]) => ({
-    name: filterName,
-    count: filterPoints(points).length,
-  }),
-);
-
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
 const sortEventTime = (eventA, eventB) => {
   const dateFromOne = dayjs(eventA.dateFrom);
   const dateToOne = dayjs(eventA.dateTo);
@@ -77,6 +55,14 @@ const sortEventTime = (eventA, eventB) => {
 
 const sortEventPrice = (eventA, eventB) => eventB.basePrice - eventA.basePrice;
 
+const sortEventDay = (eventA, eventB) => {
+  const dateFromOne = dayjs(eventA.dateFrom);
+  const dateFromTwo = dayjs(eventB.dateFrom);
+  return dateFromOne.diff(dateFromTwo);
+};
+
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 export {
   getInteger,
   getRandomArrayElement,
@@ -86,8 +72,9 @@ export {
   getYearMonthDate,
   getFullDate,
   getSlashFullDate,
-  generateFilter,
-  updateItem,
   sortEventTime,
-  sortEventPrice
+  sortEventPrice,
+  sortEventDay,
+  isDatesEqual,
+  filter
 };
