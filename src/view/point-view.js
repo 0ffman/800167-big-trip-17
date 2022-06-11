@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate, getHoursMinutesDate, getYearMonthDate, getFullDate} from '../utils.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 
 const createOfferTemplate = (offer) => (
@@ -53,7 +54,7 @@ const createPointTemplate = (point) =>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="${type ? `img/icons/${type}.png` : ''}" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination.name}</h3>
+        <h3 class="event__title">${type} ${destination ? he.encode(destination.name) : ''}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFromFull}">${dateFromHoursMinutes}</time>
