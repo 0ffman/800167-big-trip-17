@@ -177,8 +177,6 @@ export default class PointEditView extends AbstractStatefulView {
   #pointsModel = null;
 
   constructor(point, pointsModel) {
-    console.log(point)
-    console.log(pointsModel)
     super();
     this._state = PointEditView.parsePointToState(point);
     this.#pointsModel = pointsModel;
