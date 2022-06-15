@@ -7,6 +7,7 @@ import EventNewPresenter from './event-new-presenter.js';
 import { sortEventDay, sortEventTime, sortEventPrice } from '../utils.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../data.js';
 import { filter } from '../utils.js';
+import LoadingView from '../view/loading-view.js';
 
 export default class TripPresenter {
   #eventContainer = null;
@@ -21,6 +22,8 @@ export default class TripPresenter {
   #tripListComponent = new TripListView();
   #sortComponent = null;
   #noPointComponent = null;
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   constructor(eventContainer, pointsModel, filterModel) {
     this.#eventContainer = eventContainer;
@@ -57,7 +60,7 @@ export default class TripPresenter {
   createEvent = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#eventNewPresenter.init(callback);
+    this.#eventNewPresenter.init(callback, this.#pointsModel);
   };
 
   #handleModeChange = () => {
@@ -82,7 +85,7 @@ export default class TripPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#eventItemPresenter.get(data.id).init(data);
+        this.#eventItemPresenter.get(data.id).init(data, this.#pointsModel);
         break;
       case UpdateType.MINOR:
         this.#clearEventSection();
@@ -90,6 +93,11 @@ export default class TripPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearEventSection({resetSortType: true});
+        this.#renderEventSection();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderEventSection();
         break;
     }
@@ -114,12 +122,16 @@ export default class TripPresenter {
 
   #renderPoint = (point) => {
     const eventItemPresenter = new EventItemPresenter(this.#tripListComponent.element, this.#handleViewAction, this.#handleModeChange);
-    eventItemPresenter.init(point);
+    eventItemPresenter.init(point, this.#pointsModel);
     this.#eventItemPresenter.set(point.id, eventItemPresenter);
   };
 
   #renderPoints = (points) => {
     points.forEach((point) => this.#renderPoint(point));
+  };
+
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#eventContainer, RenderPosition.AFTERBEGIN);
   };
 
   #renderNoPoints = () => {
@@ -134,6 +146,7 @@ export default class TripPresenter {
     this.#eventItemPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -145,6 +158,13 @@ export default class TripPresenter {
   };
 
   #renderEventSection = () => {
+    render(this.#tripListComponent, this.#eventContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const points = this.events;
     const pointCount = points.length;
 
@@ -154,7 +174,6 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    render(this.#tripListComponent, this.#eventContainer);
     this.#renderPoints(points);
   };
 

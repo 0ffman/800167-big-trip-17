@@ -26,14 +26,14 @@ export default class EventItemPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, pointsModel) => {
     this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new PointView(point);
-    this.#pointEditComponent = new PointEditView(point);
+    this.#pointComponent = new PointView(point, pointsModel);
+    this.#pointEditComponent = new PointEditView(point, pointsModel);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
