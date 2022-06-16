@@ -56,33 +56,39 @@ export default class PointsModel extends Observable {
       ];
       this._notify(updateType, updatedEvent);
     } catch(err) {
-      throw new Error('Can\'t update task');
+      throw new Error('Can\'t update event');
     }
 
   };
 
-  addEvent = (updateType, update) => {
-    this.#points = [
-      update,
-      ...this.#points,
-    ];
-
-    this._notify(updateType, update);
+  addEvent = async (updateType, update) => {
+    try {
+      const response = await this.#pointsApiService.addEvent(update);
+      const newEvent = this.#adaptToClient(response);
+      this.#points = [newEvent, ...this.#points];
+      this._notify(updateType, newEvent);
+    } catch(err) {
+      throw new Error('Can\'t add event');
+    }
   };
 
-  deleteEvent = (updateType, update) => {
+  deleteEvent = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting event');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      await this.#pointsApiService.deleteEvent(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete event');
+    }
   };
 
   #adaptToClient = (point) => {
