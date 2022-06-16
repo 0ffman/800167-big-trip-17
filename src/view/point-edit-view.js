@@ -1,11 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { getSlashFullDate, getRandomArrayElement, getInteger } from '../utils.js';
-import { TYPE_VALUES, NAME_VALUES, DESCRIPTION_VALUES } from '../data.js';
+import { getSlashFullDate} from '../utils.js';
+import { TYPE_VALUES } from '../data.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
-
-const RANDOM_PHOTO_COUNT = 50;
 
 const createOfferTemplate = ({id, title, price}) => (
   `<div class="event__offer-selector">
@@ -23,7 +21,16 @@ const createOfferTemplate = ({id, title, price}) => (
   </div>`
 );
 
-const createOffersTemplate = (offers) => offers.map(createOfferTemplate).join('');
+const createOffersTemplate = (eventTypeOffers, eventOffers) => (
+  `
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${eventTypeOffers.map((offer) => createOfferTemplate(offer, eventOffers)).join('')}
+      </div>
+    </section>
+  `
+);
 
 const createEventTypesTemplate = (types, eventType) => (
   `<fieldset class="event__type-group">
@@ -52,7 +59,7 @@ const createDestinationPhotosTemplate = (destinationPhotos) => (
 );
 
 
-const createPointEditTemplate = (point) => {
+const createPointEditTemplate = (point, offersValue, destinationsValue) => {
   const {
     basePrice,
     dateFrom ,
@@ -66,9 +73,12 @@ const createPointEditTemplate = (point) => {
   const dateFromSlashes = dateFrom  ? getSlashFullDate(dateFrom) : '';
   const dateToSlashes = dateTo ? getSlashFullDate(dateTo) : '';
 
-  const offersTemplate = createOffersTemplate(offers);
+  const eventTypeOffers = offersValue.find((offer) => offer.type === type) ? offersValue.find((offer) => offer.type === type).offers : [];
+  const destinationNames = destinationsValue.map((item) => item['name']);
+
+  const offersTemplate = createOffersTemplate(eventTypeOffers, offers);
   const eventTypesTemplate = createEventTypesTemplate(TYPE_VALUES, type);
-  const destinationsTemplate = createDestinationsTemplate(NAME_VALUES, destination.name);
+  const destinationsTemplate = createDestinationsTemplate(destinationNames, destination.name);
   const destinationPhotosTemplate = createDestinationPhotosTemplate(destination.pictures);
 
   const buttonEditTemplate = isEdit
@@ -145,12 +155,7 @@ const createPointEditTemplate = (point) => {
           ${buttonEditTemplate}
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            <div class="event__available-offers">
-              ${offersTemplate}
-            </div>
-          </section>
+          ${offersTemplate}
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${destination.description}</p>
@@ -169,10 +174,12 @@ const createPointEditTemplate = (point) => {
 
 export default class PointEditView extends AbstractStatefulView {
   #datepicker = null;
+  #pointsModel = null;
 
-  constructor(point) {
+  constructor(point, pointsModel) {
     super();
     this._state = PointEditView.parsePointToState(point);
+    this.#pointsModel = pointsModel;
 
     this.#setInnerHandlers();
     this.#setDateFromDatepicker();
@@ -180,7 +187,7 @@ export default class PointEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditTemplate(this._state);
+    return createPointEditTemplate(this._state,this.#pointsModel ? this.#pointsModel.offers : [], this.#pointsModel ? this.#pointsModel.destinations : []);
   }
 
   setEditClickHandler = (callback) => {
@@ -259,33 +266,11 @@ export default class PointEditView extends AbstractStatefulView {
 
   #pointDestinationToggleHandler = (evt) => {
     evt.preventDefault();
+    const targetValue = evt.target.value;
+    const destinationItems = this.#pointsModel ? this.#pointsModel.destinations : [];
+    const destinationValue = destinationItems.find((destination) => destination.name === targetValue);
     this.updateElement({
-      destination: {
-        description: getRandomArrayElement(DESCRIPTION_VALUES),
-        name: evt.target.value,
-        pictures: [
-          {
-            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
-            description: getRandomArrayElement(DESCRIPTION_VALUES)
-          },
-          {
-            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
-            description: getRandomArrayElement(DESCRIPTION_VALUES)
-          },
-          {
-            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
-            description: getRandomArrayElement(DESCRIPTION_VALUES)
-          },
-          {
-            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
-            description: getRandomArrayElement(DESCRIPTION_VALUES)
-          },
-          {
-            src: `http://picsum.photos/248/152?r=${getInteger(0, RANDOM_PHOTO_COUNT)}`,
-            description: getRandomArrayElement(DESCRIPTION_VALUES)
-          }
-        ]
-      }
+      destination: destinationValue ? destinationValue : destinationItems[0]
     });
   };
 

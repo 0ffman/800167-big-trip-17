@@ -14,7 +14,7 @@ const createOfferTemplate = (offer) => (
 
 const createOffersTemplate = (offers) => offers.map(createOfferTemplate).join('');
 
-const createPointTemplate = (point) =>
+const createPointTemplate = (point, offerItems) =>
 {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, offers, type } = point;
 
@@ -45,7 +45,10 @@ const createPointTemplate = (point) =>
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
 
-  const offersTemplate = createOffersTemplate(offers);
+  const eventTypeOffer = offerItems.find((offer) => offer.type === type);
+  const eventOffers = eventTypeOffer ? eventTypeOffer.offers.filter((v) => offers.some((v2) => v.id === v2)) : [];
+
+  const offersTemplate = createOffersTemplate(eventOffers);
 
   return(
     `<li class="trip-events__item">
@@ -86,16 +89,17 @@ const createPointTemplate = (point) =>
 
 
 export default class PointView extends AbstractView {
-
   #point = null;
+  #pointsModel = null;
 
-  constructor(point) {
+  constructor(point, pointsModel) {
     super();
     this.#point = point;
+    this.#pointsModel = pointsModel;
   }
 
   get template() {
-    return createPointTemplate(this.#point);
+    return createPointTemplate(this.#point, this.#pointsModel ? this.#pointsModel.offers : []);
   }
 
   setEditClickHandler = (callback) => {
