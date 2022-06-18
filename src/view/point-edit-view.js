@@ -263,7 +263,6 @@ export default class PointEditView extends AbstractStatefulView {
 
   setDeleteClickHandler = (callback) => {
     if ( this.element.querySelector('.event__reset-btn--delete') ) {
-      console.log(1)
       this._callback.deleteClick = callback;
       this.element.querySelector('.event__reset-btn--delete').addEventListener('click', this.#formDeleteClickHandler);
     }
@@ -271,7 +270,7 @@ export default class PointEditView extends AbstractStatefulView {
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(PointEditView.parseStateToEvent(this._state));
+    this._callback.deleteClick(PointEditView.parseStateToPoint(this._state));
   };
 
   _restoreHandlers = () => {
