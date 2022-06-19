@@ -4,10 +4,15 @@ import TripListView from '../view/trip-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import EventItemPresenter from './event-item-presenter';
 import EventNewPresenter from './event-new-presenter.js';
-import { sortEventDay, sortEventTime, sortEventPrice } from '../utils.js';
+import { sortEventDay, sortEventTime, sortEventPrice, filter } from '../utils.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../data.js';
-import { filter } from '../utils.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class TripPresenter {
   #eventContainer = null;
@@ -24,6 +29,7 @@ export default class TripPresenter {
   #noPointComponent = null;
   #loadingComponent = new LoadingView();
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(eventContainer, pointsModel, filterModel) {
     this.#eventContainer = eventContainer;
@@ -68,18 +74,37 @@ export default class TripPresenter {
     this.#eventItemPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this.#pointsModel.updateEvent(updateType, update);
+        this.#eventItemPresenter.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updateEvent(updateType, update);
+        } catch(err) {
+          this.#eventItemPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_EVENT:
-        this.#pointsModel.addEvent(updateType, update);
+        this.#eventNewPresenter.setSaving();
+        try {
+          await this.#pointsModel.addEvent(updateType, update);
+        } catch(err) {
+          this.#eventNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_EVENT:
-        this.#pointsModel.deleteEvent(updateType, update);
+        this.#eventItemPresenter.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deleteEvent(updateType, update);
+        } catch(err) {
+          this.#eventItemPresenter.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

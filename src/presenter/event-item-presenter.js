@@ -52,7 +52,8 @@ export default class EventItemPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -73,6 +74,41 @@ export default class EventItemPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.resetPointAndReplaceToCard();
     }
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   };
 
   #replaceCardToPoint = () => {
@@ -121,7 +157,6 @@ export default class EventItemPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replacePointToCard();
   };
 
   #handleDeleteClick = (event) => {
