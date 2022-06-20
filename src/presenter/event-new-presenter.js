@@ -20,7 +20,7 @@ export default class EventNewPresenter {
       return;
     }
 
-    this.#pointEditComponent = new PointEditView(null, pointsModel);
+    this.#pointEditComponent = new PointEditView(pointsModel);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setEditClickHandler(this.#handleDeleteClick);
     this.#pointEditComponent.setCancelClickHandler(this.#handleDeleteClick);
