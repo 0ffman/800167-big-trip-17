@@ -6,22 +6,40 @@ import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createOfferTemplate = ({id, title, price}, isDisabled) => (
-  `<div class="event__offer-selector">
+const BLANK_POINT = {
+  basePrice: 100,
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  destination: {
+    description: 'Lorem ipsum',
+    name: 'Chamonix',
+    pictures: []
+  },
+  isFavorite: false,
+  offers: [],
+  type: TYPE_VALUES[0]
+};
+
+const createOfferTemplate = ({id, title, price}, eventOffers, isDisabled) => {
+  const isChecked = eventOffers.includes(id) ? 'checked' : '';
+
+  return (`
+    <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
           id="event-offer-${title.toLowerCase().replace(' ', '-')}-${id}"
           type="checkbox"
           name="event-offer-${title.toLowerCase().replace(' ', '-')}"
           value="${id}"
           ${isDisabled ? 'disabled' : ''}
+          ${isChecked}
       >
       <label class="event__offer-label" for="event-offer-${title.toLowerCase().replace(' ', '-')}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
-  </div>`
-);
+  </div>`);
+};
 
 const createOffersTemplate = (eventTypeOffers, eventOffers, isDisabled) => (
   `
@@ -82,6 +100,7 @@ const createPointEditTemplate = (point, offersValue, destinationsValue) => {
     isDeleting
   } = point;
 
+
   const dateFromSlashes = dateFrom  ? getSlashFullDate(dateFrom) : '';
   const dateToSlashes = dateTo ? getSlashFullDate(dateTo) : '';
 
@@ -108,7 +127,7 @@ const createPointEditTemplate = (point, offersValue, destinationsValue) => {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="${type ? `img/icons/${type}.png` : ''}" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="${type ? `img/icons/${type}.png` : `img/icons/${TYPE_VALUES[0]}.png`}" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden"
                    id="event-type-toggle-1"
@@ -202,7 +221,7 @@ export default class PointEditView extends AbstractStatefulView {
   #datepicker = null;
   #pointsModel = null;
 
-  constructor(point, pointsModel) {
+  constructor(pointsModel, point = BLANK_POINT) {
     super();
     this._state = PointEditView.parsePointToState(point);
     this.#pointsModel = pointsModel;

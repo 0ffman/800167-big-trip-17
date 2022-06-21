@@ -33,7 +33,7 @@ export default class EventItemPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView(point, pointsModel);
-    this.#pointEditComponent = new PointEditView(point, pointsModel);
+    this.#pointEditComponent = new PointEditView(pointsModel, point);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
