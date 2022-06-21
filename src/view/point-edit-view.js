@@ -7,17 +7,17 @@ import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  basePrice: 0,
-  dateFrom: null,
-  dateTo: null,
+  basePrice: 100,
+  dateFrom: new Date(),
+  dateTo: new Date(),
   destination: {
-    description: '',
-    name: '',
+    description: 'Lorem ipsum',
+    name: 'Chamonix',
     pictures: []
   },
   isFavorite: false,
   offers: [],
-  type: ''
+  type: TYPE_VALUES[0]
 };
 
 const createOfferTemplate = ({id, title, price}, eventOffers, isDisabled) => {
@@ -99,6 +99,7 @@ const createPointEditTemplate = (point, offersValue, destinationsValue) => {
     isSaving,
     isDeleting
   } = point;
+
 
   const dateFromSlashes = dateFrom  ? getSlashFullDate(dateFrom) : '';
   const dateToSlashes = dateTo ? getSlashFullDate(dateTo) : '';
