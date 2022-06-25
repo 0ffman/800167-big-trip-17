@@ -35,6 +35,23 @@ const getSlashFullDate = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 const isDateFuture = (dateFrom) => dateFrom && dayjs().isBefore(dateFrom, 'D');
 const isDatePast = (dateTo) => dateTo && dayjs().isAfter(dateTo, 'D');
 
+const getEventDates = (dateFrom, dateTo) => {
+  let dateFromFormat = '';
+  let dateToFormat = '';
+  if ( dateFrom !== null && dateTo !== null ) {
+    const dateFromMonth = dayjs(dateFrom).format('M');
+    const dateToMonth = dayjs(dateTo).format('M');
+    if ( dateFromMonth !== dateToMonth ) {
+      dateFromFormat = dayjs(dateFrom).format('D MMM');
+      dateToFormat = dayjs(dateTo).format('D MMM');
+    } else {
+      dateFromFormat = dayjs(dateFrom).format('D MMM');
+      dateToFormat = dayjs(dateTo).format('D');
+    }
+  }
+  return `${dateFromFormat}&nbsp;&mdash;&nbsp;${dateToFormat}`;
+};
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter((point) => isDateFuture(point.dateFrom)),
@@ -63,6 +80,10 @@ const sortEventDay = (eventA, eventB) => {
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
+const getEventOffersType = (offers, type) => offers.find((offer) => offer.type === type)
+  ? offers.find((offer) => offer.type === type).offers
+  : [];
+
 export {
   getInteger,
   getRandomArrayElement,
@@ -76,5 +97,7 @@ export {
   sortEventPrice,
   sortEventDay,
   isDatesEqual,
-  filter
+  filter,
+  getEventDates,
+  getEventOffersType
 };
