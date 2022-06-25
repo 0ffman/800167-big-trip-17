@@ -1,5 +1,5 @@
 import {render} from './framework/render.js';
-import TripPresenter from './presenter/event-presenter.js';
+import EventPresenter from './presenter/event-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
@@ -17,7 +17,7 @@ const filterContainerElement = siteHeaderElement.querySelector('.trip-controls__
 
 const pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
-const tripPresenter = new TripPresenter(siteEventContainerElement, pointsModel, filterModel);
+const eventPresenter = new EventPresenter(siteEventContainerElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filterContainerElement, filterModel, pointsModel);
 const newEventButtonComponent = new NewEventButtonView();
 
@@ -26,11 +26,11 @@ const handleNewEventFormClose = () => {
 };
 
 const handleNewEventButtonClick = () => {
-  tripPresenter.createEvent(handleNewEventFormClose);
+  eventPresenter.createEvent(handleNewEventFormClose);
   newEventButtonComponent.element.disabled = true;
 };
 
-tripPresenter.init();
+eventPresenter.init();
 filterPresenter.init();
 pointsModel.init()
   .finally(() => {

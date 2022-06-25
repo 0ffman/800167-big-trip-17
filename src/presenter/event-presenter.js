@@ -14,7 +14,7 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-export default class TripPresenter {
+export default class EventPresenter {
   #eventContainer = null;
   #pointsModel = null;
   #filterModel = null;

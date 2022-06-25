@@ -31,16 +31,31 @@ const createPointTemplate = (point, offerItems) =>
   const dateToFull = dateTo ? getFullDate(dateTo) : '';
 
   const HOURS_IN_DAY = 24;
+  const MINUTES_IN_HOUR = 60;
+  const START_LENGTH = 2;
 
 
   const calculateEventDuration = (from = null, to = null) => {
     const dateIn = dayjs(from);
     const dateOut = dayjs(to);
-    let hours = dateOut.diff(dateIn, 'hours');
-    const days = Math.floor(hours / HOURS_IN_DAY);
-    hours = hours - (days * HOURS_IN_DAY);
+    const allMinutes = dateOut.diff(dateIn, 'minutes');
+    const allHours = Math.floor(allMinutes / MINUTES_IN_HOUR);
+    const days = Math.floor(allHours / HOURS_IN_DAY);
+    const hours = allHours - (days * HOURS_IN_DAY);
+    const minutes = allMinutes - (allHours * MINUTES_IN_HOUR);
+    const daysWithZero = String(days).padStart(START_LENGTH, '0');
+    const hoursWithZero = String(hours).padStart(START_LENGTH, '0');
+    const minutesWithZero = String(minutes).padStart(START_LENGTH, '0');
 
-    return `${days}D ${hours}M`;
+    if (days > 0) {
+      return `${daysWithZero}D ${hoursWithZero}H ${minutesWithZero}M`;
+    }
+
+    if (hours > 0) {
+      return `${hoursWithZero}H ${minutesWithZero}M`;
+    }
+
+    return `${minutesWithZero}M`;
   };
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
