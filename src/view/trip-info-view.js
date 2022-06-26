@@ -28,7 +28,7 @@ const createInfoMainTemplate = (points) => {
   return (
     `<div class="trip-info__main">
       <h1 class="trip-info__title">${infoTitle}</h1>
-      <p class="trip-info__dates">${eventDates}</p>pointsModel
+      <p class="trip-info__dates">${eventDates}</p>
     </div>`
   );
 };

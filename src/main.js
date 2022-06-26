@@ -11,13 +11,14 @@ const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
 
 const siteMainElement = document.querySelector('.page-main');
 const siteMainSectionElement = document.querySelector('.trip-main');
+const siteTripBlockElement = siteMainSectionElement.querySelector('.trip-info');
 const siteEventContainerElement = siteMainElement.querySelector('.trip-events');
 const siteHeaderElement = document.querySelector('.page-header');
 const filterContainerElement = siteHeaderElement.querySelector('.trip-controls__filters');
 
 const pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
-const eventPresenter = new EventPresenter(siteEventContainerElement, pointsModel, filterModel);
+const eventPresenter = new EventPresenter(siteEventContainerElement, pointsModel, filterModel, siteTripBlockElement);
 const filterPresenter = new FilterPresenter(filterContainerElement, filterModel, pointsModel);
 const newEventButtonComponent = new NewEventButtonView();
 

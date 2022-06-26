@@ -4,6 +4,7 @@ import TripListView from '../view/trip-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import EventItemPresenter from './event-item-presenter';
 import EventNewPresenter from './event-new-presenter.js';
+import EventInfoPresenter from './event-info-presenter';
 import { sortEventDay, sortEventTime, sortEventPrice, filter } from '../utils.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../data.js';
 import LoadingView from '../view/loading-view.js';
@@ -21,6 +22,7 @@ export default class EventPresenter {
 
   #eventItemPresenter = new Map();
   #eventNewPresenter = null;
+  #eventInfoPresenter = null;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
 
@@ -31,12 +33,13 @@ export default class EventPresenter {
   #isLoading = true;
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
-  constructor(eventContainer, pointsModel, filterModel) {
+  constructor(eventContainer, pointsModel, filterModel, tripBlockElement) {
     this.#eventContainer = eventContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
     this.#eventNewPresenter = new EventNewPresenter(this.#tripListComponent.element, this.#handleViewAction);
+    this.#eventInfoPresenter = new EventInfoPresenter(tripBlockElement, this.#pointsModel);
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -166,6 +169,7 @@ export default class EventPresenter {
 
 
   #clearEventSection = ({resetSortType = false} = {}) => {
+    this.#eventInfoPresenter.destroy();
     this.#eventNewPresenter.destroy();
     this.#eventItemPresenter.forEach((presenter) => presenter.destroy());
     this.#eventItemPresenter.clear();
@@ -196,6 +200,8 @@ export default class EventPresenter {
     if (pointCount === 0) {
       this.#renderNoPoints();
       return;
+    } else {
+      this.#eventInfoPresenter.init();
     }
 
     this.#renderSort();
